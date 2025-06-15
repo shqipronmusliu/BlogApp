@@ -16,6 +16,7 @@
     "@mui/material": "^7.0.1",
     "bcryptjs": "^3.0.2",
     "classnames": "^2.5.1",
+    "formik": "^2.4.6",
     "framer-motion": "^12.5.0",
     "lucide-react": "^0.485.0",
     "mongodb": "^6.16.0",

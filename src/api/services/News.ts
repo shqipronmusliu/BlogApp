@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 export async function createNews(data: News) {
   const client = await clientPromise;
-  const db = client.db("myapp");
+  const db = client.db("blog-app");
   const result = await db.collection("news").insertOne({
     ...data,
     createdAt: new Date(),
@@ -14,7 +14,7 @@ export async function createNews(data: News) {
 
 export async function getNews() {
   const client = await clientPromise;
-  const db = client.db("myapp");
+  const db = client.db("blog-app");
   const news = await db
     .collection("news")
     .find()
@@ -25,14 +25,14 @@ export async function getNews() {
 
 export async function getSingleNews(id: string) {
     const client = await clientPromise;
-    const db = client.db("myapp");
+    const db = client.db("blog-app");
     const news = await db.collection("news").findOne({ _id: new ObjectId(id) });
     return news;   
 }
 
 export async function updateNews(id: string, data: News) {
     const client = await clientPromise;
-    const db = client.db("myapp");
+    const db = client.db("blog-app");
     const news = await db
       .collection("news")
       .updateOne({ _id: new ObjectId(id) }, { $set: data });
@@ -41,7 +41,7 @@ export async function updateNews(id: string, data: News) {
 
 export async function deleteNews(id:string) {
     const client = await clientPromise;
-    const db = client.db("myapp");
+    const db = client.db("blog-app");
     const news = await db.collection("news").deleteOne({ _id: new ObjectId(id) });
     return news;
 
