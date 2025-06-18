@@ -1,23 +1,23 @@
 import Link from "next/link";
-import { LayoutDashboard, User2 } from "lucide-react";
+import { Newspaper, User2 } from "lucide-react";
 import React from 'react';
 
-export default function Sidebar() {
+export default function AdminSidebar() {
   return (
     <aside className="top-14 left-0 min-h-screen w-60 bg-gradient-to-b from-gray-700 to-blue-900 shadow-xl flex flex-col py-8 px-4 z-40">
-      <div className="mb-10 text-3xl font-bold text-white text-center tracking-wide">Dashboard</div>
+      <div className="mb-10 text-2xl font-bold text-white text-center tracking-wide">Paneli i Adminit</div>
       <nav className="flex flex-col gap-4">
          <Link
-            href="/dashboard"
+            href="/admin"
             className="flex items-center gap-3 py-2 px-4 rounded-xl hover:bg-blue-800 transition text-white font-medium text-lg"
          >
-            <LayoutDashboard size={22} /> Dashboard
+            <Newspaper size={22} /> Lajmet
          </Link>
          <Link
-            href="/profile"
+            href="/admin/profile"
             className="flex items-center gap-3 py-2 px-4 rounded-xl hover:bg-blue-800 transition text-white font-medium text-lg"
          >
-            <User2 size={22} /> Profile
+            <User2 size={22} /> Profili
          </Link>
       </nav>
     </aside>

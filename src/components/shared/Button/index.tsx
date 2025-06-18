@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import cs from "classnames";
+import React from "react";
 
 interface Props {
     text: string;

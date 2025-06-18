@@ -2,12 +2,15 @@ import { Blog } from "@/api/models/Blog";
 import useFetch from "hooks/useFetch";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import useRequireAuth from "../../../src/hooks/useRequireAuth";
 
 export default function UpdateBlog() {
     const router = useRouter();
     const {id} = router.query;
     const [newBlog, setNewBlog] = useState({ title: "", body: "" });
     const { data: existingBlog, loading, put } = useFetch<Blog>(`/api/blogs/${id}`);
+
+    useRequireAuth({ role: "user", redirectTo: "/create/blog" });
 
     useEffect(() => {
         if(existingBlog){

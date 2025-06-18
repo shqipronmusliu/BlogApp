@@ -1,14 +1,22 @@
-import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-const useRequireAuth = (status: string) => {
+interface Options {
+  role?: "user" | "admin";
+  redirectTo?: string;
+}
+
+export default function useRequireAuth({ role, redirectTo = "/sign-in" }: Options) {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/sign-in");
+    if (status === "loading") return;
+    if (!session) {
+      router.replace(redirectTo);
+    } else if (role && session.user.role !== role) {
+      router.replace(redirectTo);
     }
-  }, [status, router]);
-};
-
-export default useRequireAuth;
+  }, [session, status, role, redirectTo, router]);
+}

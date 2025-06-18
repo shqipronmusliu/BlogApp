@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { Trash, Edit } from "lucide-react";
 import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
+import React from 'react';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();

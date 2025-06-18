@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import useFetch from "hooks/useFetch";
 import { User } from "@/api/models/User";
+import { signIn } from "next-auth/react";
+import React from 'react';
 
 export default function SignUp() {
     const router = useRouter();
@@ -65,6 +67,26 @@ export default function SignUp() {
           <h2 className="text-black text-2xl font-semibold mb-4">
             Regjistrohu
           </h2>
+          <div className="mt-6 mb-4">
+            <hr className="border-gray-300" />
+            <p className="text-center text-gray-500 text-sm my-4">ose</p>
+
+            <button
+              onClick={() => signIn("google")}
+              type="button"
+              className="w-full py-2 mb-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+            >
+              Regjistrohu me Google
+            </button>
+
+            <button
+              onClick={() => signIn("facebook")}
+              type="button"
+              className="w-full py-2 bg-blue-800 text-white font-semibold rounded hover:bg-blue-900 transition"
+            >
+              Regjistrohu me Facebook
+            </button>
+          </div>
 
           {error && (
             <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">

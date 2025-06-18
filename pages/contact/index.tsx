@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import useFetch from "hooks/useFetch";
+import React from 'react';
 
 export default function Contact() {
+  const { data, loading, error, post } = useFetch("/api/contact");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -36,7 +39,7 @@ export default function Contact() {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validationErrors = validate();
@@ -45,6 +48,23 @@ export default function Contact() {
       return;
     }
 
+    try {
+      const response = await post({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        
+      });
+      if (response && !error) {
+        setSubmitted(true);
+        setFormData({ name: "", email: "", message: "" });
+        setTimeout(() => setSubmitted(false), 3000);
+      } else {
+        setErrors({ message: "Gabim gjatë dërgimit të mesazhit." });
+      }
+      } catch (err: any) {
+      setErrors({ message: err.message || "POST failed" });
+    }
     setSubmitted(true);
     setFormData({ name: "", email: "", message: "" });
     setTimeout(() => setSubmitted(false), 3000);

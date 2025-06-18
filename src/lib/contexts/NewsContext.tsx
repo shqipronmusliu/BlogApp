@@ -1,5 +1,6 @@
 import { News } from "@/api/models/News";
-import { createContext, ReactNode, useState,useContext } from "react";
+import React, { createContext, ReactNode, useState,useContext } from "react";
+
 
 interface NewsContextType {
     news: News[];

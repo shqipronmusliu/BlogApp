@@ -3,14 +3,15 @@ import useFetch from "hooks/useFetch";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-
-
+import useRequireAuth from "../../../src/hooks/useRequireAuth";
 
 export default function CreateBlog() {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const [newBlog, setNewBlog] = useState({ title: "", body: "" });
     const {post} = useFetch<Blog[]>("/api/blogs");
+
+    useRequireAuth({ role: "user", redirectTo: "/create/blog" });
 
     const handleCreate = async () => {
         if(!newBlog.title || !newBlog.body) return;
@@ -18,16 +19,18 @@ export default function CreateBlog() {
             alert("Duhet të jeni i kyçur për të krijuar blog!");
             return;
         }
-        
         const blogToSend = {
             ...newBlog,
             userEmail: session.user.email,
         };
-
-        await post(blogToSend);
-        setNewBlog({ title: "", body: "" });
-        router.push("/dashboard");
-
+        try {
+            await post(blogToSend);
+            setNewBlog({ title: "", body: "" });
+            router.push("/dashboard");
+        } catch (error) {
+            alert("Gabim gjatë krijimit të blogut! " + error.message);
+            console.error(error);
+        }
     };
    
     return(

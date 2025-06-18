@@ -4,9 +4,11 @@ import CustomImage from "@/assets/images/image.jpg";
 import Button from "@/components/shared/Button/index";
 import Card from "@/components/shared/Card";
 import { Rocket, BarChart, ShieldCheck, Circle, Trash } from "lucide-react";
-import useFetch from "hooks/useFetch";
 import { useEffect, useState } from "react";
+import useFetch from "hooks/useFetch";
 import { CircularProgress, IconButton, Tooltip } from "@mui/material";
+import { Blog } from "api/models/Blog";
+import React from 'react';
 
 export interface Post {
   id: string;
@@ -14,25 +16,14 @@ export interface Post {
   body: string;
 }
 
-
 export default function Home() {
-  const {data: initialPosts, loading} = useFetch<Post[]>(
-    "https://jsonplaceholder.typicode.com/posts"
 
-  );
+  const { data: blogsData, loading: blogsLoading, remove } = useFetch<Blog[]>("/api/blogs");
 
-  const [posts, setPosts] = useState<Post[] | null>([]);
-  useEffect(() => {
-    if (initialPosts) {
-      setPosts(initialPosts);
-    }
-  }, [initialPosts]);
-
-  const handleDelete = (id: string) => {
-    if(posts){
-      setPosts(posts.filter((post) => post.id !== id));
-    }
-  }
+  const handleDelete = async (id: string) => {
+    if (!confirm("A jeni të sigurt që doni ta fshini këtë blog?")) return;
+    await remove(`/api/blogs/${id}`);
+  };
 
   return (
     <div className="pt-14 bg-gradient-to-br from-purple-50 to-purple-100 min-h-screen">
@@ -134,32 +125,33 @@ export default function Home() {
 
       { /* Blog Section */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 py-20 bg-purple-50">
-        {loading ? 
-        <CircularProgress />
-
-        :
-        <>
-        {posts && posts?.map((post) => 
-          <motion.section
-            key={post.id}
-            className="bg-white p-6 rounded-xl shadow-md text-left flex flex-col"
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <h3 className="text-2xl font-bold text-purple-700 line-clamp-2 md-2">{post.title}</h3>
-            <p className="text-gray-600 mb-4 flex-1">{post.body}</p>
-            <div className="flex items-end justify-end">
-              <Tooltip title="Fshij Postin">
-                <IconButton onClick={()=> handleDelete(post.id)}>
-                  <Trash className="text-grey-400"/>   
-                </IconButton>
-              </Tooltip>
-            </div>
-          </motion.section>
+        {blogsLoading ? (
+          <CircularProgress className="mx-auto" />
+        ) : (
+          blogsData?.map((post) => (
+            <motion.section
+              key={post._id}
+              className="bg-white p-6 rounded-xl shadow-md flex flex-col"
+              initial={{ opacity: 0.8 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              <h3 className="text-2xl font-bold text-purple-700 line-clamp-2 mb-4">
+                {post.title}
+              </h3>
+              <p className="text-gray-600 mb-4 flex-1">
+                {post.body}
+              </p>
+              <div className="flex items-end justify-end">
+                <Tooltip title="Fshij Postin">
+                  <IconButton onClick={() => handleDelete(post._id)}>
+                    <Trash className="text-grey-400" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </motion.section>
+          ))
         )}
-        </>
-        }
       </div>
 
       {/* Contact Section */}

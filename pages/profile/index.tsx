@@ -2,7 +2,9 @@ import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { User } from "@/api/models/User"
+import { User } from "@/api/models/User";
+import React from 'react';
+
 
 type Props = {
    initialName: string;

@@ -3,62 +3,63 @@ import { getCsrfToken, signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import React from 'react';
 
 export default function SignIn({ csrfToken }: { csrfToken: string }) {
-    const { data: session, status } = useSession();
-    const [authError, setAuthError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+  const { data: session, status } = useSession();
+  const [authError, setAuthError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-    const validate = (values: { email: string; password: string }) => {
+  const validate = (values: { email: string; password: string }) => {
     const errors: { email?: string; password?: string } = {};
 
     if (!values.email) {
-        errors.email = "Email-i është i detyrueshëm";
+      errors.email = "Email-i është i detyrueshëm";
     } else if (
-        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
     ) {
-        errors.email = "Email i pavlefshëm";
+      errors.email = "Email i pavlefshëm";
     }
 
     if (!values.password) {
-        errors.password = "Fjalëkalimi është i detyrueshëm";
+      errors.password = "Fjalëkalimi është i detyrueshëm";
     } else if (values.password.length < 6) {
-        errors.password = "Fjalëkalimi duhet të ketë të paktën 6 karaktere";
+      errors.password = "Fjalëkalimi duhet të ketë të paktën 6 karaktere";
     }
 
     return errors;
-    };
+  };
 
-    const handleSubmit = async (
+  const handleSubmit = async (
     values: { email: string; password: string },
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
-    ) => {
+  ) => {
     setAuthError("");
     setSuccessMessage("");
     const res = await signIn("credentials", {
-        redirect: false,
-        email: values.email,
-        password: values.password,
+      redirect: false,
+      email: values.email,
+      password: values.password,
     });
 
     if (res?.error) {
-        setAuthError(res.error);
+      setAuthError(res.error);
     } else {
-        setSuccessMessage("Kyçja u bë me sukses! Po ridrejtohesh...");
+      setSuccessMessage("Kyçja u bë me sukses! Po ridrejtohesh...");
     }
 
     setSubmitting(false);
-    };
+  };
 
-    useEffect(() => {
+  useEffect(() => {
     if (status === "authenticated") {
-        if (session?.user?.role === "admin") {
+      if (session?.user?.role === "admin") {
         router.push("/admin");
-        } else {
+      } else {
         router.push("/dashboard");
-        }
+      }
     }
-    }, [status, session]);
+  }, [status, session]);
 
   return (
     <div className="pt-12">
@@ -71,54 +72,76 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
               {authError}
             </div>
           )}
-            {successMessage && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <strong className="font-bold">Sukses! </strong>
-                    <span className="block sm:inline">{successMessage}</span>
-                </div>
-            )}
-
-            <Formik
-                initialValues={{ email: "", password: "" }}
-                validate={validate}
-                onSubmit={handleSubmit}
+          {successMessage && (
+            <div
+              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
+              role="alert"
             >
+              <strong className="font-bold">Sukses! </strong>
+              <span className="block sm:inline">{successMessage}</span>
+            </div>
+          )}
+
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validate={validate}
+            onSubmit={handleSubmit}
+          >
             {({ isSubmitting }) => (
-                <Form className="space-y-4">
+              <Form className="space-y-4">
                 <Field
-                    type="text"
-                    name="email"
-                    placeholder="Email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  type="text"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="text-red-500 text-sm min-h-[20px] mt-1"
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm min-h-[20px] mt-1"
                 />
 
                 <Field
-                    type="password"
-                    name="password"
-                    placeholder="Fjalëkalimi"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  type="password"
+                  name="password"
+                  placeholder="Fjalëkalimi"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-sm min-h-[20px] mt-1"
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm min-h-[20px] mt-1"
                 />
 
                 <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition"
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition"
                 >
-                    {isSubmitting ? "Duke u kyçur..." : "Kyçu"}
+                  {isSubmitting ? "Duke u kyçur..." : "Kyçu"}
                 </button>
-                </Form>
+              </Form>
             )}
           </Formik>
+
+          <div className="mt-6">
+            <hr className="border-gray-300" />
+            <p className="text-center text-gray-500 text-sm my-4">ose</p>
+
+            <button
+              onClick={() => signIn("google")}
+              className="w-full py-3 mb-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition"
+            >
+              Kyçu me Google
+            </button>
+
+            <button
+              onClick={() => signIn("facebook")}
+              className="w-full py-3 bg-blue-800 text-white font-semibold rounded-md hover:bg-blue-900 transition"
+            >
+              Kyçu me Facebook
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -126,13 +149,12 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
 }
 
 export async function getServerSideProps(context: any) {
-    const csrfToken = await getCsrfToken(context);
-    return {
-        props: {
-            csrfToken,
-        },
-    };
+  const csrfToken = await getCsrfToken(context);
+  return {
+    props: {
+      csrfToken: csrfToken ?? null,
+    },
+  };
 }
-
 
 SignIn.displayName = "Sign In | My Application";

@@ -27,6 +27,7 @@ function useFetch<T>(url: string){
                 method: 'POST',
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(payload),
+                credentials: "include",
             });
             const result = await res.json();
             setData(result);
@@ -46,6 +47,7 @@ function useFetch<T>(url: string){
                 method: 'PUT',
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(payload),
+                credentials: "include",
             });
             const result = await res.json();
             setData(result);
@@ -64,6 +66,8 @@ function useFetch<T>(url: string){
         try{
             const res = await fetch(customUrl || url, {
                 method: 'DELETE',
+                credentials: "include",
+
             });
             const result = await res.json();
             setData(result);

@@ -2,6 +2,7 @@ import { News } from "api/models/News";
 import useFetch from "hooks/useFetch";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import useRequireAuth from "../../../src/hooks/useRequireAuth";
 
 
 
@@ -9,6 +10,8 @@ export default function CreateNews() {
     const router = useRouter();
     const [newNews, setNewNews] = useState({ title: "", body: "" });
     const {post} = useFetch<News[]>("/api/news");
+
+    useRequireAuth({ role: "user", redirectTo: "/create/news" });
 
     const handleCreate = async () => {
         if(!newNews.title || !newNews.body) return;
