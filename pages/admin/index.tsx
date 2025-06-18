@@ -1,7 +1,6 @@
 import { CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { motion } from "framer-motion";
 import { useSession,getSession } from "next-auth/react";
-import useFetch from "../../src/hooks/useFetch";
 import useRequireAuth from "../../src/hooks/useRequireAuth";
 import { News } from "api/models/News";
 import { useRouter } from "next/router";
@@ -11,30 +10,40 @@ import Link from "next/link";
 import AdminSidebar from "@/components/Sidebar/AdminSidebar";
 import React from 'react';
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
+type SessionWithRole = {
+  user: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    role: string;
+  };
+};
 
-  if (!session || session.user.role !== "admin") {
-      return {
-         redirect: {
-            destination: "/sign-in",
-            permanent: false,
-         },
-      };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const session = await getSession(context) as unknown as SessionWithRole;
+
+  if (session.user.role !== "admin") {
+    return {
+        redirect: {
+          destination: "/sign-in",
+          permanent: false,
+        },
+    };
   }
 
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/news`, {
-      headers: {
-         cookie: context.req.headers.cookie || "",
-      },
+    headers: {
+        cookie: context.req.headers.cookie || "",
+    },
    });
 
   const newsData = await res.json();
 
   return {
-      props: {
-         newsData,
-      },
+    props: {
+      newsData,
+    },
    };
 };
 
@@ -42,19 +51,19 @@ type Props = {
   newsData: News[];
 };
 
-
-
 export default function AdminPanel({ newsData }: Props) {
   const { data: session, status } = useSession();
-  useRequireAuth(status);
+
+  useRequireAuth({ role: "admin", redirectTo: "/sign-in" });
+
   const router = useRouter();
 
   if (status === "loading") return <CircularProgress />;
-  if (status !== "authenticated" || session.user.role !== "admin") {
+  if (status !== "authenticated" || !session?.user?.role || session.user.role !== "admin") {
     return <div className="text-center mt-10 text-xl font-semibold">Vetëm adminët kanë qasje këtu.</div>;
   }
 
-  const newsArray = Array.isArray(newsData) ? newsData : [];
+  // const newsArray = Array.isArray(newsData) ? newsData : [];
 
   const handleDeleteNews = async (id: string) => {
       const confirmed = confirm("A jeni të sigurt që doni ta fshini këtë lajm?");
@@ -92,7 +101,7 @@ export default function AdminPanel({ newsData }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                 {newsData.map((news) => (
                   <motion.section
-                    key={news._id}
+                    key={news._id?.toString()}
                     className="bg-white rounded-3xl shadow-lg p-8 flex flex-col justify-between hover:shadow-xl transition duration-300"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -111,7 +120,7 @@ export default function AdminPanel({ newsData }: Props) {
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Fshij Lajmin">
-                        <IconButton onClick={() => handleDeleteNews(news._id!)}>
+                        <IconButton onClick={() => handleDeleteNews(news._id!.toString())}>
                           <Trash className="text-grey-400" />
                         </IconButton>
                       </Tooltip>

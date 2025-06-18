@@ -2,6 +2,7 @@ import { News } from "@/api/models/News";
 import useFetch from "hooks/useFetch";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import React from 'react';
 
 export default function UpdateNews() {
     const router = useRouter();

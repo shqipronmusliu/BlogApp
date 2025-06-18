@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import React from "react";
 
 interface Props{
-    icon: any;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
     title: string;
     description: string;
 }

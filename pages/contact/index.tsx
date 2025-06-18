@@ -4,7 +4,7 @@ import useFetch from "hooks/useFetch";
 import React from 'react';
 
 export default function Contact() {
-  const { data, loading, error, post } = useFetch("/api/contact");
+  const { error, post } = useFetch("/api/contact");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -62,8 +62,9 @@ export default function Contact() {
       } else {
         setErrors({ message: "Gabim gjatë dërgimit të mesazhit." });
       }
-      } catch (err: any) {
-      setErrors({ message: err.message || "POST failed" });
+      } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Gabim i panjohur";
+      setErrors({ message });
     }
     setSubmitted(true);
     setFormData({ name: "", email: "", message: "" });

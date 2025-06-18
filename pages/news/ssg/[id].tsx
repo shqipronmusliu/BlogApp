@@ -3,28 +3,41 @@ import { News } from "@/api/models/News";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+import React from "react";
 
 type Props = {
   news: News;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/news`);
-  const newsList: News[] = await res.json();
+  const client = await clientPromise;
+  const db = client.db("blog-app");
+
+  const newsList = await db.collection("news").find({}, { projection: { _id: 1 } }).toArray();
 
   const paths = newsList.map((n) => ({
-    params: { id: n._id },
+    params: { id: n._id.toString() },
   }));
 
   return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/news/${params!.id}`);
-  const news: News = await res.json();
+  const client = await clientPromise;
+  const db = client.db("blog-app");
+
+  const news = await db.collection("news").findOne({
+    _id: new ObjectId(params!.id as string),
+  });
+
+  if (!news) return { notFound: true };
 
   return {
-    props: { news },
+    props: {
+      news: JSON.parse(JSON.stringify(news)),
+    },
   };
 };
 
@@ -58,7 +71,7 @@ export default function NewsSSG({ news }: Props) {
             </p>
 
             <p className="text-xs text-gray-400 italic mt-8">
-               News ID: {news._id}
+               News ID: {news._id?.toString()}
             </p>
          </motion.div>
       </>

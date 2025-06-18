@@ -3,30 +3,45 @@ import { Blog } from "@/api/models/Blog";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+import React from "react";
 
 type Props = {
   blog: Blog;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blogs`);
-  const data: Blog[] = await res.json();
+  const client = await clientPromise;
+  const db = client.db("blog-app");
 
-  const paths = data.map((blog) => ({
-    params: { id: blog._id },
+  const blogs = await db
+    .collection("blogs")
+    .find({}, { projection: { _id: 1 } })
+    .toArray();
+
+  const paths = blogs.map((blog) => ({
+    params: { id: blog._id.toString() },
   }));
 
   return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blogs/${params!.id}`);
-   if (!res.ok) return { notFound: true };
-   const blog: Blog = await res.json();
+  const client = await clientPromise;
+  const db = client.db("blog-app");
 
-   return {
-      props: { blog },
-   };
+  const blog = await db.collection("blogs").findOne({
+    _id: new ObjectId(params!.id as string),
+  });
+
+  if (!blog) return { notFound: true };
+
+  return {
+    props: {
+      blog: JSON.parse(JSON.stringify(blog)), // për të serializu `ObjectId`
+    },
+  };
 };
 
 export default function BlogSSGDetail({ blog }: Props) {
@@ -59,7 +74,7 @@ export default function BlogSSGDetail({ blog }: Props) {
             </p>
 
             <p className="text-xs text-gray-400 italic mt-8">
-               Blog ID: {blog._id}
+               Blog ID: {blog._id?.toString()}
             </p>
          </motion.div>
       </>

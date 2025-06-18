@@ -3,8 +3,7 @@ import { motion } from "framer-motion";
 import CustomImage from "@/assets/images/image.jpg";
 import Button from "@/components/shared/Button/index";
 import Card from "@/components/shared/Card";
-import { Rocket, BarChart, ShieldCheck, Circle, Trash } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Rocket, BarChart, ShieldCheck, Trash } from "lucide-react";
 import useFetch from "hooks/useFetch";
 import { CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { Blog } from "api/models/Blog";
@@ -130,7 +129,7 @@ export default function Home() {
         ) : (
           blogsData?.map((post) => (
             <motion.section
-              key={post._id}
+              key={post._id?.toString()}
               className="bg-white p-6 rounded-xl shadow-md flex flex-col"
               initial={{ opacity: 0.8 }}
               animate={{ opacity: 1 }}
@@ -144,7 +143,7 @@ export default function Home() {
               </p>
               <div className="flex items-end justify-end">
                 <Tooltip title="Fshij Postin">
-                  <IconButton onClick={() => handleDelete(post._id)}>
+                  <IconButton onClick={() => handleDelete(post._id!.toString())}>
                     <Trash className="text-grey-400" />
                   </IconButton>
                 </Tooltip>

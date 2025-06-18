@@ -3,30 +3,37 @@ import { News } from "@/api/models/News";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+import React from "react";
 
 type Props = {
   news: News;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/news`);
-  const newsArray: News[] = await res.json();
+  const client = await clientPromise;
+  const db = client.db("blog-app");
 
-  const paths = newsArray.map((item) => ({
-    params: { id: item._id },
+  const newsArray = await db.collection("news").find({}, { projection: { _id: 1 } }).toArray();
+
+  const paths = newsArray.map((news) => ({
+    params: { id: news._id.toString() },
   }));
 
   return { paths, fallback: "blocking" };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/news/${params?.id}`);
-  if (!res.ok) return { notFound: true };
+  const client = await clientPromise;
+  const db = client.db("blog-app");
 
-  const news: News = await res.json();
+  const news = await db.collection("news").findOne({ _id: new ObjectId(params!.id as string) });
+
+  if (!news) return { notFound: true };
 
   return {
-    props: { news },
+    props: { news: JSON.parse(JSON.stringify(news)) },
     revalidate: 30,
   };
 };
@@ -61,7 +68,7 @@ export default function NewsDetailISR({ news }: Props) {
         </p>
 
         <p className="text-xs text-gray-400 italic mt-8">
-        News ID: {news._id}
+          News ID: {news._id?.toString()}
         </p>
       </motion.div>
     </>

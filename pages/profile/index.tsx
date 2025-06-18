@@ -63,8 +63,12 @@ export default function Profile({ initialName }: Props) {
       setMsg("Profili u përditësua me sukses.");
       setPassword("");
       router.replace(router.asPath);
-    } catch (err: any) {
-      setMsg(err.message || "Gabim gjatë përditësimit.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setMsg(err.message);
+      } else {
+        setMsg("Gabim gjatë përditësimit.");
+      }
     }
     setLoading(false);
   };

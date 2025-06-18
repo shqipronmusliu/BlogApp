@@ -3,6 +3,7 @@ import useFetch from "hooks/useFetch";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useRequireAuth from "../../../src/hooks/useRequireAuth";
+import React from 'react';
 
 export default function UpdateBlog() {
     const router = useRouter();

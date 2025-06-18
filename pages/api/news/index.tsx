@@ -10,14 +10,14 @@ export default async function handler(
             const newNews = req.body;
             const result = await createNews(newNews);
             return res.status(201).json(result);
-        } catch (error) {
+        } catch  {
             return res.status(500).json({ message: "Gabim gjate krijimit te news" });
         }
     } else if (req.method === "GET") {
         try {
             const news = await getNews();
             return res.status(200).json(news);
-        } catch (error) {
+        } catch {
             return res.status(500).json({ message: "Gabim gjate marrjes se news" });
         }
     } else {

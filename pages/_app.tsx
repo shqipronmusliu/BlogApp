@@ -7,12 +7,12 @@ import { SessionProvider } from "next-auth/react";
 import React from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
-  let title = pageProps.title ? pageProps.title : "My Platform";
-  let description = pageProps.description
+  const title = pageProps.title ? pageProps.title : "My Platform";
+  const description = pageProps.description
     ? pageProps.description
     : "My Platform Description";
-  let image = pageProps.image ? pageProps.image : "https://my-domain/meta.svg";
-  let url = pageProps.url ? pageProps.url : "https://my-domain.com";
+  const image = pageProps.image ? pageProps.image : "https://my-domain/meta.svg";
+  const url = pageProps.url ? pageProps.url : "https://my-domain.com";
 
   return( 
     <>

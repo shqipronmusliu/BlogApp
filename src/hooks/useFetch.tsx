@@ -13,8 +13,9 @@ function useFetch<T>(url: string){
             setData(result);
             setLoading(false);
         })
-        .catch((err) => {
-            setError(err.message || 'Get request failed');
+        .catch((err: unknown) => {
+            const message = err instanceof Error ? err.message : "Gabim i panjohur";
+            setError(message);
             setLoading(false);
         });
     }, [url]);
@@ -32,8 +33,9 @@ function useFetch<T>(url: string){
             const result = await res.json();
             setData(result);
             return result;
-        }catch (err:any) {
-            setError(err.message || 'POST failed');
+        }catch (err:unknown) {
+            const message = err instanceof Error ? err.message : "POST failed";
+            setError(message);
         }finally{
             setLoading(false);
         }
@@ -52,8 +54,9 @@ function useFetch<T>(url: string){
             const result = await res.json();
             setData(result);
             return result;
-        }catch (err:any) {
-            setError(err.message || 'PUT failed');
+        }catch (err:unknown) {
+            const message = err instanceof Error ? err.message : "PUT failed";
+            setError(message);
         }finally{
             setLoading(false);
         }
@@ -72,8 +75,9 @@ function useFetch<T>(url: string){
             const result = await res.json();
             setData(result);
             return result;
-        }catch (err:any) {
-            setError(err.message || 'DELETE failed');
+        }catch (err:unknown) {
+            const message = err instanceof Error ? err.message : "DELETE failed";
+            setError(message);
         }finally{
             setLoading(false);
         }

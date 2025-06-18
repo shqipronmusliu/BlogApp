@@ -28,19 +28,22 @@ export async function createUser(data: User): Promise<User> {
   const db = client.db(DB_NAME);
 
   const now = new Date();
+  const { _id, ...rest } = data;
+
   const toInsert = {
-    ...data,
+    ...rest,
     createdAt: now,
+    ...(_id ? { _id: new ObjectId(_id) } : {}),
   };
 
   const result = await db.collection(COLLECTION).insertOne(toInsert);
   return {
-    _id: result.insertedId,
+    _id: result.insertedId.toString(),
     name: data.name,
     email: data.email,
     role: data.role,
     createdAt: now,
-  } as User
+  } as User;
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
@@ -48,7 +51,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   const db = client.db(DB_NAME);
 
   return db
-    .collection(COLLECTION)
+    .collection<User>(COLLECTION) 
     .findOne({ email }, { projection: { password: 0 } });
 }
 
@@ -57,7 +60,7 @@ export async function getUserById(id: string): Promise<Omit<User, "password"> | 
   const db = client.db(DB_NAME);
 
   return db
-    .collection(COLLECTION)
+    .collection<User>(COLLECTION)
     .findOne(
       { _id: new ObjectId(id) },
       { projection: { password: 0 } }
@@ -71,9 +74,7 @@ export async function updateUser(
     const client = await clientPromise;
     const db = client.db(DB_NAME);
 
-    const setFields: Record<string, any> = {
-        updatedAt: new Date(),
-    };
+    const setFields: Partial<Record<keyof User, unknown>> = {};
 
     if (data.name !== undefined) {
         setFields.name = data.name;

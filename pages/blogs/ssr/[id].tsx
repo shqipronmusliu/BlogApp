@@ -3,21 +3,32 @@ import { Blog } from "@/api/models/Blog";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+import React from "react";
+
 
 type Props = {
   blog: Blog;
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blogs/${params?.id}`);
-  if (!res.ok) return { notFound: true };
+  const client = await clientPromise;
+  const db = client.db("blog-app");
 
-  const blog: Blog = await res.json();
+  const blog = await db.collection("blogs").findOne({
+    _id: new ObjectId(params!.id as string),
+  });
+
+  if (!blog) return { notFound: true };
 
   return {
-    props: { blog },
+    props: {
+      blog: JSON.parse(JSON.stringify(blog)),
+    },
   };
 };
+
 
 export default function SSRBlogDetail({ blog }: Props) {
    return (
@@ -49,7 +60,7 @@ export default function SSRBlogDetail({ blog }: Props) {
             </p>
 
             <p className="text-xs text-gray-400 italic mt-8">
-            Blog ID: {blog._id}
+            Blog ID: {blog._id?.toString()}
             </p>
          </motion.div>
       </>

@@ -1,11 +1,11 @@
 import router from "next/router";
-import { getCsrfToken, signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { signIn } from "next-auth/react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import React from 'react';
 
-export default function SignIn({ csrfToken }: { csrfToken: string }) {
+export default function SignIn() {
   const { data: session, status } = useSession();
   const [authError, setAuthError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -146,15 +146,6 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
       </div>
     </div>
   );
-}
-
-export async function getServerSideProps(context: any) {
-  const csrfToken = await getCsrfToken(context);
-  return {
-    props: {
-      csrfToken: csrfToken ?? null,
-    },
-  };
 }
 
 SignIn.displayName = "Sign In | My Application";

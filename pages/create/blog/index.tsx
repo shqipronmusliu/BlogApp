@@ -4,10 +4,11 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import useRequireAuth from "../../../src/hooks/useRequireAuth";
+import React from "react";
 
 export default function CreateBlog() {
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const [newBlog, setNewBlog] = useState({ title: "", body: "" });
     const {post} = useFetch<Blog[]>("/api/blogs");
 
@@ -28,7 +29,11 @@ export default function CreateBlog() {
             setNewBlog({ title: "", body: "" });
             router.push("/dashboard");
         } catch (error) {
-            alert("Gabim gjatë krijimit të blogut! " + error.message);
+            if (error instanceof Error) {
+                alert("Gabim gjatë krijimit të blogut! " + error.message);
+            } else {
+                alert("Gabim i panjohur gjatë krijimit të blogut!");
+            }
             console.error(error);
         }
     };

@@ -33,9 +33,9 @@ export default async function handler(
             const result = await createUser(newUser);
             res.status(201).json({ 
                 message: "Perdoruesi u regjistrua me sukses", 
-                userId: result.insertedId,
+                userId: result._id ? result._id.toString() : null,
             });
-        }catch(error){
+        }catch{
             res.status(500).json({ message: "Gabim gjate regjistrimit"});
         }
     }else{

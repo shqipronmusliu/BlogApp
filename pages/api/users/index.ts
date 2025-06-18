@@ -6,8 +6,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
       const newUser = await createUser(req.body);
       return res.status(201).json(newUser);
-      } catch (err: any) {
-      return res.status(500).json({ message: err.message });
+      } catch (err: unknown) {
+         const message = err instanceof Error ? err.message : "Gabim i panjohur";
+         return res.status(500).json({ message });
       }
    }
    if (req.method === "GET") {

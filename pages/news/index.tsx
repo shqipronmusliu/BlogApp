@@ -20,7 +20,6 @@ export default function NewsPage() {
     const { data: session, status } = useSession();
     const [items, setItems] = useState<News[] | null>(null);
     const isAdmin = session?.user?.role === "admin";
-    const isUser = session?.user?.role === "user";
     const isLoadingSession = status === "loading";
     const router = useRouter();
 

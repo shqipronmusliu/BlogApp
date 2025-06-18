@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from 'react';
 
 export default function Footer() {
-  const router = useRouter();
 
   return (
     <footer className="bg-gradient-to-r from-gray-800 to-gray-900 py-7 border-t mt-auto">

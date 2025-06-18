@@ -16,7 +16,7 @@ export default function Blogs() {
   const [posts, setPosts] = useState<Blog[] | null>(null);
   const isLoadingSession = status === "loading";
   const isUser = session?.user?.role === "user";
-  const isAdmin = session?.user?.role === "admin";
+  const router = useRouter();
 
   useEffect(() => {
     if (blogsData) {
@@ -28,7 +28,6 @@ export default function Blogs() {
     return <CircularProgress />;
   }
 
-  const router = useRouter();
 
   const handleDeleteBlog = async (id: string) => {
     if (!confirm("A jeni të sigurt që doni ta fshini këtë blog?")) return;
@@ -44,7 +43,7 @@ export default function Blogs() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
         {posts && posts.slice(0, 3).map((post) => (
           <motion.section
-            key={post._id}
+            key={post._id?.toString()}
             className="bg-white rounded-3xl shadow-lg p-8 flex flex-col justify-between hover:shadow-xl transition duration-300"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -62,7 +61,7 @@ export default function Blogs() {
               </Tooltip>
               {isUser && (
               <Tooltip title="Fshij Postimin">
-                <IconButton onClick={() => handleDeleteBlog(post._id)}>
+                <IconButton onClick={() => handleDeleteBlog(post._id?.toString() || "")}>
                   <Trash className="text-grey-400" />
                 </IconButton>
               </Tooltip>
@@ -86,10 +85,10 @@ export default function Blogs() {
           Shfaqja e Blogut nga Databaza MongoDB
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {visibleBlogs.length > 0 ? (
+          {visibleBlogs && visibleBlogs.length > 0 ? (
             visibleBlogs.map((post) => (
               <motion.section
-                key={post._id}
+                key={post._id?.toString()}
                 className="bg-white rounded-3xl shadow-lg p-8 flex flex-col justify-between hover:shadow-xl transition duration-300"
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
@@ -108,7 +107,7 @@ export default function Blogs() {
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Fshij Postimin">
-                        <IconButton onClick={() => handleDeleteBlog(post._id)}>
+                        <IconButton onClick={() => handleDeleteBlog(post._id?.toString() || "")}>
                           <Trash className="text-grey-400" />
                         </IconButton>
                       </Tooltip>

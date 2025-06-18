@@ -10,6 +10,14 @@ type Props = {
   initialName: string;
 };
 
+type SessionUser = {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  id: string;
+  role: string;
+};
+
 export const getServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   const session = await getSession({ req });
   if (!session || session.user.role !== "admin") {
@@ -44,7 +52,9 @@ export default function AdminProfile({ initialName }: Props) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/users/" + session?.user.id, {
+      const user = session?.user as SessionUser;
+
+      const res = await fetch("/api/users/" + user.id, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),
@@ -54,8 +64,12 @@ export default function AdminProfile({ initialName }: Props) {
       setMsg("Profili u përditësua me sukses.");
       setPassword("");
       router.replace(router.asPath);
-    } catch (err: any) {
-      setMsg(err.message || "Gabim gjatë përditësimit.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setMsg(err.message || "Gabim gjatë përditësimit.");
+      } else {
+        setMsg("Gabim i panjohur.");
+      }
     }
     setLoading(false);
   };

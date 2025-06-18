@@ -9,14 +9,14 @@ export default withAuth((req) => {
     return NextResponse.next();
   }
 
-  if (pathname === "/api/blogs" && req.method === "POST" && !["user","admin"].includes(role)) {
+  if (pathname === "/api/blogs" && req.method === "POST" && !["user","admin"].includes(role as string)) {
     return NextResponse.redirect(new URL("/sign-in?callbackUrl=/", req.url));
   }
-  if (pathname.startsWith("/api/blogs/") && req.method === "DELETE" && !["user","admin"].includes(role)) {
+  if (pathname.startsWith("/api/blogs/") && req.method === "DELETE" && !["user","admin"].includes(role as string)) {
     return NextResponse.redirect(new URL("/sign-in?callbackUrl=/", req.url));
   }
 
-  if (pathname === "/create/blog" && !["user","admin"].includes(role)) {
+  if (pathname === "/create/blog" && !["user","admin"].includes(role as string)) {
     return NextResponse.redirect(new URL("/sign-in?callbackUrl=/create/blog", req.url));
   }
 }, {

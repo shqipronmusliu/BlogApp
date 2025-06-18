@@ -1,7 +1,10 @@
+import { ObjectId } from "mongodb";
+
 export interface Blog {
-    _id?: any;
+
+    _id?: ObjectId;
     title: string;
     body: string;
     userEmail: string;
-    createdAt?: any;
+    createdAt?: Date;
 }

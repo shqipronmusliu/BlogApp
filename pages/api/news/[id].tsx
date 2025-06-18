@@ -12,7 +12,7 @@ export default async function handler(
             const news = await getSingleNews(id as string);
 
             res.status(200).json(news);
-        }catch (error) {
+        }catch {
             res.status(500).json({ message: "Gabim gjate marrjes se news" });
         }
     }
@@ -24,7 +24,7 @@ export default async function handler(
             const news = await updateNews(id as string, data);
 
             res.status(200).json(news);
-        }catch (error) {
+        }catch {
             res.status(500).json({ message: "Gabim gjate perditesimit te news" });
         }
     }
@@ -35,7 +35,7 @@ export default async function handler(
             const news = await deleteNews(id as string);
 
             res.status(200).json(news);
-        }catch (error) {
+        }catch {
             res.status(500).json({ message: "Gabim gjate fshirjes se news" });
         }
     }else{

@@ -12,7 +12,7 @@ import React from 'react';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
-  useRequireAuth(status);
+  useRequireAuth({ role: "user" });
   const router = useRouter();
   const { data: blogsData = [], loading, remove } = useFetch<Blog[]>("/api/blogs");
 
@@ -61,7 +61,7 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                 {userBlogs.map((blog) => (
                   <motion.section
-                    key={blog._id}
+                    key={blog._id?.toString()}
                     className="bg-white rounded-3xl shadow-lg p-8 flex flex-col justify-between hover:shadow-xl transition duration-300"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -80,7 +80,7 @@ export default function Dashboard() {
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Fshij Blogun">
-                        <IconButton onClick={() => handleDeleteBlog(blog._id!)}>
+                        <IconButton onClick={() => handleDeleteBlog(blog._id!.toString())}>
                           <Trash className="text-grey-400" />
                         </IconButton>
                       </Tooltip>
